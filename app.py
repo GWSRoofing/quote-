@@ -7,7 +7,7 @@ import re
 import os
 import base64
 
-st.set_page_config(page_title="GWS Quote", page_icon="🏠", layout="wide")
+st.set_page_config(page_title="GWS Quote Generator", page_icon="🏠", layout="wide")
 
 st.markdown("""
 <style>
@@ -15,9 +15,8 @@ html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"] { backgro
 [data-testid="stAppViewContainer"] { background: #ffffff; }
 [data-testid="stHeader"] { background: #ffffff; }
 .header-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #e0e0e0; }
-.header-title { font-size: 1.8rem; font-weight: 600; color: #1a1a1a; margin: 0; }
+.header-title { font-size: 2.2rem; font-weight: 600; color: #1a1a1a; margin: 0; }
 .section-label { font-size: 0.85rem; font-weight: 600; color: #444; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
-.info-box { background: #f0f4ff; border: 1px solid #c8d4f0; border-left: 3px solid #1a3a8a; border-radius: 4px; padding: 0.8rem 1rem; color: #1a3a8a; margin-bottom: 1rem; font-size: 0.875rem; line-height: 1.5; }
 .preview-panel { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 6px; padding: 1.5rem; min-height: 400px; font-size: 0.875rem; line-height: 1.7; color: #333; white-space: pre-wrap; font-family: monospace; }
 .preview-placeholder { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 6px; padding: 1.5rem; min-height: 400px; display: flex; align-items: center; justify-content: center; color: #aaa; font-style: italic; font-size: 0.9rem; text-align: center; }
 .error-box { background: #fff5f5; border: 1px solid #fcc; border-left: 3px solid #e05555; border-radius: 4px; padding: 0.8rem 1rem; color: #c0392b; margin: 0.5rem 0; font-size: 0.875rem; }
@@ -46,11 +45,11 @@ logo_b64, logo_mime = get_logo_b64()
 
 if logo_b64:
     st.markdown(
-        f'<div class="header-row"><img src="data:{logo_mime};base64,{logo_b64}" style="height:60px;width:auto;"><span class="header-title">Quote</span></div>',
+        f'<div class="header-row"><img src="data:{logo_mime};base64,{logo_b64}" style="height:60px;width:auto;"><span class="header-title">Quote Generator</span></div>',
         unsafe_allow_html=True
     )
 else:
-    st.markdown('<div class="header-row"><span class="header-title">GWS Quote</span></div>', unsafe_allow_html=True)
+    st.markdown('<div class="header-row"><span class="header-title">GWS Quote Generator</span></div>', unsafe_allow_html=True)
 
 SYSTEM_PROMPT = """You are a quote parser for GWS Roofing. Extract structured data from dictated roofing job information and return JSON only - no explanation, no preamble, no markdown fences.
 
@@ -204,13 +203,6 @@ for key in ["parsed_data", "preview_text", "excel_bytes", "filename", "error"]:
 left_col, right_col = st.columns([1, 1], gap="large")
 
 with left_col:
-    st.markdown('<div class="section-label">Quote Details</div>', unsafe_allow_html=True)
-    st.markdown(
-        '<div class="info-box">Select the estimator, then begin your dictation with '
-        '<strong>New quote</strong>. Include date, customer name, address, postcode and items. '
-        'Costs must include £ or the word "pounds".</div>',
-        unsafe_allow_html=True
-    )
     st.markdown('<div class="section-label">Estimator</div>', unsafe_allow_html=True)
     estimator_name = st.selectbox(
         "Estimator",
