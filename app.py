@@ -7,141 +7,52 @@ import re
 import os
 import base64
 
-st.set_page_config(
-    page_title="GWS Quote",
-    page_icon="🏠",
-    layout="wide"
-)
+st.set_page_config(page_title="GWS Quote", page_icon="🏠", layout="wide")
 
 st.markdown("""
 <style>
-html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"] {
-    background: #ffffff;
-    color: #1a1a1a;
-}
+html, body, [data-testid="stAppViewContainer"], [data-testid="stMain"] { background: #ffffff; color: #1a1a1a; }
 [data-testid="stAppViewContainer"] { background: #ffffff; }
 [data-testid="stHeader"] { background: #ffffff; }
-.header-row {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid #e0e0e0;
-}
+.header-row { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid #e0e0e0; }
 .header-title { font-size: 1.8rem; font-weight: 600; color: #1a1a1a; margin: 0; }
-.section-label {
-    font-size: 0.85rem;
-    font-weight: 600;
-    color: #444;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 0.4rem;
-}
-.info-box {
-    background: #f0f4ff;
-    border: 1px solid #c8d4f0;
-    border-left: 3px solid #1a3a8a;
-    border-radius: 4px;
-    padding: 0.8rem 1rem;
-    color: #1a3a8a;
-    margin-bottom: 1rem;
-    font-size: 0.875rem;
-    line-height: 1.5;
-}
-.preview-panel {
-    background: #f8f9fa;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    padding: 1.5rem;
-    min-height: 400px;
-    font-size: 0.875rem;
-    line-height: 1.7;
-    color: #333;
-    white-space: pre-wrap;
-    font-family: monospace;
-}
-.preview-placeholder {
-    background: #f8f9fa;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    padding: 1.5rem;
-    min-height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #aaa;
-    font-style: italic;
-    font-size: 0.9rem;
-    text-align: center;
-}
-.error-box {
-    background: #fff5f5;
-    border: 1px solid #fcc;
-    border-left: 3px solid #e05555;
-    border-radius: 4px;
-    padding: 0.8rem 1rem;
-    color: #c0392b;
-    margin: 0.5rem 0;
-    font-size: 0.875rem;
-}
-.stTextArea textarea {
-    background: #ffffff !important;
-    border: 1px solid #d0d0d0 !important;
-    color: #1a1a1a !important;
-    border-radius: 4px !important;
-    font-size: 0.9rem !important;
-}
-.stTextArea textarea:focus {
-    border-color: #1a3a8a !important;
-    box-shadow: 0 0 0 1px #1a3a8a20 !important;
-}
-.stButton > button {
-    background: #12254a;
-    color: #ffffff;
-    border: none;
-    font-weight: 600;
-    font-size: 0.9rem;
-    padding: 0.55rem 1.5rem;
-    border-radius: 4px;
-    width: 100%;
-    transition: background 0.2s;
-}
+.section-label { font-size: 0.85rem; font-weight: 600; color: #444; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.4rem; }
+.info-box { background: #f0f4ff; border: 1px solid #c8d4f0; border-left: 3px solid #1a3a8a; border-radius: 4px; padding: 0.8rem 1rem; color: #1a3a8a; margin-bottom: 1rem; font-size: 0.875rem; line-height: 1.5; }
+.preview-panel { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 6px; padding: 1.5rem; min-height: 400px; font-size: 0.875rem; line-height: 1.7; color: #333; white-space: pre-wrap; font-family: monospace; }
+.preview-placeholder { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 6px; padding: 1.5rem; min-height: 400px; display: flex; align-items: center; justify-content: center; color: #aaa; font-style: italic; font-size: 0.9rem; text-align: center; }
+.error-box { background: #fff5f5; border: 1px solid #fcc; border-left: 3px solid #e05555; border-radius: 4px; padding: 0.8rem 1rem; color: #c0392b; margin: 0.5rem 0; font-size: 0.875rem; }
+.stTextArea textarea { background: #ffffff !important; border: 1px solid #d0d0d0 !important; color: #1a1a1a !important; border-radius: 4px !important; font-size: 0.9rem !important; }
+.stTextArea textarea:focus { border-color: #1a3a8a !important; box-shadow: 0 0 0 1px #1a3a8a20 !important; }
+.stButton > button { background: #12254a; color: #ffffff; border: none; font-weight: 600; font-size: 0.9rem; padding: 0.55rem 1.5rem; border-radius: 4px; width: 100%; transition: background 0.2s; }
 .stButton > button:hover { background: #1a3a8a; }
-[data-testid="stDownloadButton"] > button {
-    background: #1a5c2a;
-    color: #ffffff;
-    border: none;
-    font-weight: 600;
-    border-radius: 4px;
-    width: 100%;
-}
+[data-testid="stDownloadButton"] > button { background: #1a5c2a; color: #ffffff; border: none; font-weight: 600; border-radius: 4px; width: 100%; }
 [data-testid="stDownloadButton"] > button:hover { background: #236b33; }
-.divider { border: none; border-top: 1px solid #e5e5e5; margin: 1rem 0; }
 </style>
 """, unsafe_allow_html=True)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def get_logo_b64():
-    for fname in ["GWS_Roofing_Logo.jpg", "GWS Roofing Logo.jpg"]:
+    for fname in ["GWS Roofing Logo.png", "GWS_Roofing_Logo.png", "GWS_Roofing_Logo.jpg", "GWS Roofing Logo.jpg"]:
         p = os.path.join(BASE_DIR, fname)
         if os.path.exists(p):
+            ext = os.path.splitext(fname)[1].lower()
+            mime = "image/png" if ext == ".png" else "image/jpeg"
             with open(p, "rb") as f:
-                return base64.b64encode(f.read()).decode()
-    return None
+                return base64.b64encode(f.read()).decode(), mime
+    return None, None
 
-logo_b64 = get_logo_b64()
+logo_b64, logo_mime = get_logo_b64()
 
 if logo_b64:
     st.markdown(
-        f'<div class="header-row"><img src="data:image/jpeg;base64,{logo_b64}" style="height:60px;width:auto;"><span class="header-title">Quote</span></div>',
+        f'<div class="header-row"><img src="data:{logo_mime};base64,{logo_b64}" style="height:60px;width:auto;"><span class="header-title">Quote</span></div>',
         unsafe_allow_html=True
     )
 else:
     st.markdown('<div class="header-row"><span class="header-title">GWS Quote</span></div>', unsafe_allow_html=True)
 
-SYSTEM_PROMPT = """You are a quote parser for GWS Roofing. Your job is to extract structured data from dictated roofing job information and return it as JSON only - no explanation, no preamble, no markdown fences.
+SYSTEM_PROMPT = """You are a quote parser for GWS Roofing. Extract structured data from dictated roofing job information and return JSON only - no explanation, no preamble, no markdown fences.
 
 RETURN FORMAT (strict JSON):
 {
@@ -153,25 +64,20 @@ RETURN FORMAT (strict JSON):
   "guarantee": "string or null",
   "notes": "string or null",
   "items": [
-    {
-      "type": "subheading or item",
-      "number": "null or integer",
-      "description": "string (full, unsplit)",
-      "cost": "null or number"
-    }
+    {"type": "subheading or item", "number": "null or integer", "description": "string", "cost": "null or number"}
   ]
 }
 
 RULES:
-- All text to proper sentence case (first letter always capitalised).
+- All text to proper sentence case.
 - Date to DD/MM/YYYY format.
 - Cost: only valid if pound symbol or word pounds present. Numbers in descriptions are NOT costs.
-- If an item has a description but no valid cost, return {"error": "missing_cost", "item": description}.
+- If item has description but no valid cost, return {"error": "missing_cost", "item": description}.
 - Subheadings: type=subheading, number=null, cost=null.
 - Items: type=item, number=integer, cost=number.
-- guarantee and notes: only include if explicitly dictated, else null.
+- guarantee and notes: only if explicitly dictated, else null.
 - Do not carry costs between items.
-- Return ONLY valid JSON. No text before or after."""
+- Return ONLY valid JSON."""
 
 TEMPLATE_1 = os.path.join(BASE_DIR, "GWS_Quote_-_1_Page.xlsx")
 TEMPLATE_2 = os.path.join(BASE_DIR, "GWS_Quote_-_2_Page_.xlsx")
@@ -207,7 +113,7 @@ def parse_with_claude(dictation):
         messages=[{"role": "user", "content": dictation}]
     )
     raw = response.content[0].text.strip()
-    raw = re.sub(r"^``jsons*|^``s*|s*``$", "", raw, flags=re.MULTILINE).strip()
+    raw = re.sub(r"^```json\s*|^```\s*|\s*```$", "", raw, flags=re.MULTILINE).strip()
     return json.loads(raw)
 
 def calculate_rows_needed(items):
@@ -328,7 +234,7 @@ with left_col:
     )
     btn_col1, btn_col2 = st.columns([3, 1])
     with btn_col1:
-        read_btn = st.button("Read and Preview", use_container_width=True)
+        read_btn = st.button("Process with AI", use_container_width=True)
     with btn_col2:
         if st.button("Reset", use_container_width=True):
             for key in ["parsed_data", "preview_text", "excel_bytes", "filename", "error"]:
@@ -336,39 +242,24 @@ with left_col:
             st.rerun()
     if st.session_state.error:
         st.markdown(f'<div class="error-box">Warning: {st.session_state.error}</div>', unsafe_allow_html=True)
-    if st.session_state.excel_bytes:
-        st.markdown("<hr class='divider'>", unsafe_allow_html=True)
-        st.download_button(
-            label=f"Download {st.session_state.filename}",
-            data=st.session_state.excel_bytes,
-            file_name=st.session_state.filename,
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
 
 with right_col:
     st.markdown('<div class="section-label">Preview</div>', unsafe_allow_html=True)
     if st.session_state.preview_text:
         st.markdown(f'<div class="preview-panel">{st.session_state.preview_text}</div>', unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("Confirm and Generate Excel", use_container_width=True):
-            with st.spinner("Generating Excel file..."):
-                try:
-                    excel_bytes, used_2page = write_quote_to_excel(st.session_state.parsed_data)
-                    address = st.session_state.parsed_data.get("address", "Quote")
-                    safe_addr = re.sub(r"[^\w\s-]", "", address).strip()
-                    safe_addr = re.sub(r"\s+", " ", safe_addr)
-                    st.session_state.filename = f"GWS Quote {safe_addr}.xlsx"
-                    st.session_state.excel_bytes = excel_bytes
-                    st.session_state.error = None
-                    st.rerun()
-                except Exception as e:
-                    st.session_state.error = f"Excel generation error: {str(e)}"
-                    st.rerun()
+        if st.session_state.excel_bytes:
+            st.markdown("<br>", unsafe_allow_html=True)
+            st.download_button(
+                label=f"Download {st.session_state.filename}",
+                data=st.session_state.excel_bytes,
+                file_name=st.session_state.filename,
+                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            )
     else:
         st.markdown('<div class="preview-placeholder">Your quote preview will appear here</div>', unsafe_allow_html=True)
 
 if read_btn and dictation.strip():
-    with st.spinner("Reading your quote..."):
+    with st.spinner("Processing with AI..."):
         try:
             data = parse_with_claude(dictation)
             if "error" in data:
@@ -383,7 +274,12 @@ if read_btn and dictation.strip():
                     st.session_state.parsed_data = data
                     st.session_state.preview_text = build_preview(data)
                     st.session_state.error = None
-                    st.session_state.excel_bytes = None
+                    excel_bytes, used_2page = write_quote_to_excel(data)
+                    address = data.get("address", "Quote")
+                    safe_addr = re.sub(r"[^\w\s-]", "", address).strip()
+                    safe_addr = re.sub(r"\s+", " ", safe_addr)
+                    st.session_state.filename = f"GWS Quote {safe_addr}.xlsx"
+                    st.session_state.excel_bytes = excel_bytes
         except Exception as e:
             st.session_state.error = f"Error: {str(e)}"
     st.rerun()
